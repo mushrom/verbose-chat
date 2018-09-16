@@ -8,6 +8,7 @@ const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
 });
 
 module.exports = {
+    mode: "production",
     entry: "./client/index.js",
     output: {
         path: path.resolve("dist"),
