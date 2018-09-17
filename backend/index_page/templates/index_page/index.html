@@ -1,0 +1,27 @@
+{% extends "index_page/base.html" %}
+{% block title %}
+    Home
+{% endblock %}
+
+{% block content %}
+	<div class="jumbotron">
+		<h1 class="display-3">
+			Hello, world!
+		</h1>
+
+		<p class="lead">
+		<FooBar text="testing this..." />
+		</p>
+
+		<a class="btn btn-primary btn-lg"
+		   href="#" role="button">
+			Learn more
+		</a>
+	</div>
+
+	<div id="root">
+		<h2>Testing this!</h2>
+	</div>
+
+	<script type="text/javascript" src="/static/app_bundle.js"></script>
+{% endblock %}

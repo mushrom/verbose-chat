@@ -1,0 +1,4 @@
+*bundle.js
+*.sqlite3
+*_pycache_*
+*.pyc
