@@ -1,0 +1,24 @@
+{% extends "index_page/base.html" %}
+{% block title %}
+    Layout test
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 col-md-3 col-xl-2 bd-sidebar">
+                <nav id="bd-docs-nav" class="bd-links">
+                    <div class="bd-toc-item">Testing this</div>
+                    <div class="bd-toc-item">Foo bar baz</div>
+                    <div class="bd-toc-item">Hey sup</div>
+                </nav>
+            </div>
+
+            <div class="col-12 col-md-9 col-xl-10 bd-content">
+                <div id="root"> </div>
+                testing more!
+                <script type="text/javascript" src="/static/app_bundle.js"></script>
+            </div>
+        </div>
+    </div>
+{% endblock %}

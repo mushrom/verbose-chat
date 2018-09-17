@@ -6,12 +6,13 @@
 
         <title>Verbose - {% block title %}{% endblock %}</title>
         <link rel="stylesheet" href="/static/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="/static/css/verbose.css" />
     </head>
 
     <body>
 		<noscript>
-			<div class="container" id="noscript_warning">
-				Only those wielding javascript may pass here!
+			<div id="noscript_warning">
+				Only those wielding javascript may continue!
 			</div>
 		</noscript>
 		<script type="text/javascript" src="/static/bootstrap_bundle.js"></script>
@@ -25,7 +26,11 @@
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Home</a>
+                        <a class="nav-link" href="{% url 'index' %}">Home</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'layout_test' %}">Test</a>
                     </li>
 
                     <li class="nav-item">
