@@ -5,3 +5,12 @@
     padding-right: 15px;
     font-size: 18px;
 }
+
+.scroll-overflow {
+    overflow-y: scroll;
+}
+
+.verbose-content-box {
+    max-height: calc(100vh - (2.25rem + 85px));
+    height:     calc(100vh - (2.25rem + 85px));
+}

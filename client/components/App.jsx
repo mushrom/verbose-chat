@@ -1,93 +1,112 @@
 import React from "react";
 
 class FooBar extends React.PureComponent {
+    constructor(props) {
+        super(props);
+    }
+
     render() {
         return (
-            <div> {this.props.text} </div>
+            <div onClick={this.props.onClick}> {this.props.text} </div>
         );
     }
 }
 
-class Column extends React.PureComponent {
+class Sidebar extends React.PureComponent {
     render() {
         return (
-            <div class="col-md-4">
-                <h2>{this.props.title}</h2>
-                {this.props.text}
+            <div class="col-12 col-md-2">
+                <ul>
+                    <li>#channel</li>
+                    <li>#programming</li>
+                    <li>#longer-channel-name-ok</li>
+                    <li>#thumbs-skyward</li>
+                </ul>
             </div>
         );
     }
 }
 
-export default class App extends React.Component {
+class InputBox extends React.Component {
     render() {
         return (
-            <div>
-                <div class="jumbotron">
-                    <h1 class="display-3">
-                        <FooBar text="Hello, world!" />
-                    </h1>
+            <form class="bd-search">
+                <input class="form-control" type="search"
+                       placeholder="Enter some text!"></input>
+                <button class="btn d-md-none">Submit</button>
+            </form>
+        )
+    }
+}
 
-                    <p class="lead">
-                        <FooBar text="testing this..." />
-                    </p>
+export default class App extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            counter: 1,
+        }
+    }
 
-                    <a class="btn btn-primary btn-lg"
-                       href="#" role="button">
-                        Learn more
-                    </a>
-                </div>
+    handle_click() {
+        console.log("got here!");
+        //this.state.counter++;
+        this.setState(({counter: this.state.counter + 1}));
+    }
 
-                <div class="container">
+    render_foobar(text) {
+        return <FooBar text={text} onClick={() => this.handle_click()} />
+    }
+
+    render_leads() {
+        var ret = [];
+
+        for (var i = this.state.counter; i != 0; i--) {
+            ret = ret.concat([
+                <div class="container-fluid">
                     <div class="row">
-                        <div class="col-md-4">
-                            <h2>Testing this</h2>
-                            Testing this thing here,
-                            this is a test of bootstrap
-                            in order to see how it
-                            works.
+                        <div class="col-2"><b>John Doe</b></div>
+                        <div class="col">
+                            <small>Posted on Tue Sep 18 08:15:34 UTC 2018</small>
                         </div>
+                    </div>
 
-                        <div class="col-md-4">
-                            <h2>Seems bretty gud</h2>
-                            So far it seems pretty
-                            straight-forward and easy to
-                            use with react
-                        </div>
-
-                        <div class="col-md-4">
-                            <h2>thumbs skyward</h2>
-                            And hopefully it's smooth
-                            sailing from here to working
-                            on verbose.chat
+                    <div class="row">
+                        <div class="col-2"><small>&gt;&gt;</small></div>
+                        <div class="col">
+                            {this.render_foobar("Testing this: " + this.state.counter)}
                         </div>
                     </div>
                 </div>
+            ]);
+        }
 
-                <div class="container">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <h2>Testing this</h2>
-                            Testing this thing here,
-                            this is a test of bootstrap
-                            in order to see how it
-                            works.
-                        </div>
+        return ret;
+    }
 
-                        <div class="col-md-4">
-                            <h2>Seems bretty gud</h2>
-                            So far it seems pretty
-                            straight-forward and easy to
-                            use with react
-                        </div>
+    render() {
+        return (
+            <div class="row">
+                <Sidebar />
 
-                        <div class="col-md-4">
-                            <h2>thumbs skyward</h2>
-                            And hopefully it's smooth
-                            sailing from here to working
-                            on verbose.chat
-                        </div>
+                <div class="col-12 col-md-10">
+                    <div class="container-fluid scroll-overflow verbose-content-box">
+                        {this.render_leads()}
                     </div>
+
+                    <InputBox />
+
+                    <div class="jumbotron">
+                        <h1 class="display-3">
+                            {this.render_foobar("Hello, world!")}
+                        </h1>
+
+
+                        <a class="btn btn-primary btn-lg"
+                           href="#" role="button">
+                            Learn more
+                        </a>
+                    </div>
+
                 </div>
             </div>
         );
