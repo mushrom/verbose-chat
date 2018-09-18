@@ -94,19 +94,6 @@ export default class App extends React.Component {
                     </div>
 
                     <InputBox />
-
-                    <div class="jumbotron">
-                        <h1 class="display-3">
-                            {this.render_foobar("Hello, world!")}
-                        </h1>
-
-
-                        <a class="btn btn-primary btn-lg"
-                           href="#" role="button">
-                            Learn more
-                        </a>
-                    </div>
-
                 </div>
             </div>
         );
