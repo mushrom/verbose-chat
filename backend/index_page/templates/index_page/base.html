@@ -17,7 +17,7 @@
 		</noscript>
 		<script type="text/javascript" src="/static/bootstrap_bundle.js"></script>
 
-        <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark">
             <a class="navbar-brand" href="#">Verbose</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -54,5 +54,6 @@
         </nav>
 
         {% block content %} {% endblock %}
+		{% block footer %} {% endblock %}
     </body>
 </html>
