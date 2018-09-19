@@ -11,6 +11,8 @@
 }
 
 .verbose-content-box {
-    max-height: calc(100vh - (2.25rem + 60px));
-    height:     calc(100vh - (2.25rem + 60px));
+    max-height: calc(100vh - (2.25rem + 55px));
+    height:     calc(100vh - (2.25rem + 55px));
+    padding:    0px;
+    margin:     0px;
 }
