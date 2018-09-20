@@ -4,12 +4,19 @@
 
 {% block content %}
     <div class="container text-center">
-        <form action="{% url 'login' %}" method="post" class="form-signin">
+        <form action="{% url 'user_stuff:login' %}" method="post" class="form-signin">
+            {% if error %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+            {% endif %}
+
 			<h3>Verbose login</h3>
             {% csrf_token %}
 
             <div class="form-group row">
 				<input id="username-input"
+					   name="username"
                        type="username"
                        class="form-control"
                        placeholder="Username" />
@@ -17,6 +24,7 @@
 
             <div class="form-group row">
 				<input id="password-input"
+					   name="password"
                        type="password"
                        class="form-control"
                        placeholder="Password" />
@@ -25,6 +33,7 @@
             <div class="form-group-row">
 				<label>
 					<input id="rememberme-input"
+						   name="remember-me"
 						   type="checkbox">
 					Remember me
 				</label>
@@ -37,7 +46,7 @@
             </div>
         </form>
 
-		<a href="/user/register">
+		<a href="{% url 'user_stuff:register' %}">
 			Don't have an account? Register now!
 		</a>
     </div>

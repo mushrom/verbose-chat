@@ -4,12 +4,19 @@
 
 {% block content %}
     <div class="container text-center">
-        <form action="{% url 'register' %}" method="post" class="form-signin">
-			<h3>New user</h3>
+        <form action="{% url 'user_stuff:register' %}" method="post" class="form-signin">
+            {% if error %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+            {% endif %}
+
+			<h3>Create a new user</h3>
             {% csrf_token %}
 
             <div class="form-group row">
 				<input id="username-input"
+                       name="username"
                        type="username"
                        class="form-control"
                        placeholder="Username" />
@@ -17,6 +24,7 @@
 
             <div class="form-group row">
 				<input id="email-input"
+                       name="email"
                        type="email"
                        class="form-control"
                        placeholder="Email address" />
@@ -24,6 +32,7 @@
 
             <div class="form-group row">
 				<input id="password-input"
+                       name="password"
                        type="password"
                        class="form-control"
                        placeholder="Password" />
@@ -31,6 +40,7 @@
 
             <div class="form-group row">
 				<input id="password-confirm"
+                       name="password-confirm"
                        type="password"
                        class="form-control"
                        placeholder="Confirm password" />
@@ -43,7 +53,7 @@
             </div>
         </form>
 
-		<a href="/user/login">
+        <a href="{% url 'user_stuff:login' %}">
             Already have an account? Sign in here!
 		</a>
     </div>
