@@ -16,3 +16,10 @@
     padding:    0px;
     margin:     0px;
 }
+
+.form-signin {
+	width: 100%;
+	max-width: 400px;
+	padding: 50px;
+	margin: auto;
+}
