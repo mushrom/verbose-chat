@@ -20,7 +20,25 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '55$7!j%xt9@ap4pw27*!a71xk1^=78c-d(52-3doxia(##38nj'
+#SECRET_KEY = '55$7!j%xt9@ap4pw27*!a71xk1^=78c-d(52-3doxia(##38nj'
+
+SECRET_FILE = os.path.join(BASE_DIR, "secret.txt")
+try:
+    SECRET_KEY = open(SECRET_FILE).read().strip()
+
+except IOError:
+    try:
+        import random
+        import string
+
+        keychars = string.ascii_lowercase + string.punctuation + string.digits
+        SECRET_KEY = "".join([random.SystemRandom().choice(keychars) for i in range(50)])
+        secret = open(SECRET_FILE, "w")
+        secret.write(SECRET_KEY)
+        secret.close()
+
+    except IOError:
+        Exception("Couldn't generate keyfile at %s..." % SECRET_FILE)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -31,6 +49,8 @@ ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 # Application definition
 
 INSTALLED_APPS = [
+    'rest_framework',
+    'rest_framework.authtoken',
     'user_stuff.apps.UserStuffConfig',
     'index_page.apps.IndexPageConfig',
     'django.contrib.admin',
