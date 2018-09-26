@@ -41,10 +41,9 @@ except IOError:
         Exception("Couldn't generate keyfile at %s..." % SECRET_FILE)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
-
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "verbose.chat", "api.verbose.chat"]
 
 # Application definition
 
@@ -140,4 +139,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [ os.path.join(BASE_DIR, "static"), "/var/www/static/" ]
+
+if DEBUG:
+    STATICFILES_DIRS = [ os.path.join(BASE_DIR, "static") ]
+
+else:
+    STATIC_ROOT = os.path.join(BASE_DIR, "static")
