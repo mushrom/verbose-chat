@@ -1,3 +1,6 @@
 from django.contrib import admin
+from .models import VerbMessage, VerbChannel, VerbServer
 
-# Register your models here.
+admin.site.register(VerbMessage)
+admin.site.register(VerbChannel)
+admin.site.register(VerbServer)

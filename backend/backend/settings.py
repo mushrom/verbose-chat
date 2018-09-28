@@ -50,6 +50,7 @@ ALLOWED_HOSTS = ["localhost", "127.0.0.1", "verbose.chat", "api.verbose.chat"]
 INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
+    'api.apps.ApiConfig',
     'user_stuff.apps.UserStuffConfig',
     'index_page.apps.IndexPageConfig',
     'django.contrib.admin',
