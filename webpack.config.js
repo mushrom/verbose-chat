@@ -52,7 +52,9 @@ util_exports = {
     entry: "./client/bootstrap.js",
     output: {
         path: path.resolve("backend/static"),
-        filename: "bootstrap_bundle.js"
+        filename: "bootstrap_bundle.js",
+        libraryTarget: "var",
+        library: "Bundle",
     },
 
     module: {
