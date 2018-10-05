@@ -1,5 +1,6 @@
 import React from "react";
 import Fetch from "react-fetch"
+import VerbAPI from "../verbapi.js"
 
 class Message extends React.PureComponent {
     constructor(props) {
@@ -11,14 +12,21 @@ class Message extends React.PureComponent {
             <li class="list-group-item">
                 <div class="container-fluid">
                     <div class="row">
-                        <div class="col-2"><b>{this.props.message.username}</b></div>
+                        <div class="col">
+                            <small></small>
+                            <b>{this.props.message.username} </b>
+                            <small>@{this.props.message.username}</small>
+                        </div>
+                    </div>
+
+                    <div class="row">
                         <div class="col">
                             <small>Posted on {this.props.message.date_posted}</small>
                         </div>
                     </div>
 
                     <div class="row">
-                        <div class="col-2"><small>&gt;&gt;</small></div>
+                        <div class="col-1"><small>&gt;&gt;</small></div>
                         <div class="col">
                             {this.props.message.content}
                         </div>
@@ -74,7 +82,7 @@ class ServerBar extends React.Component {
     }
 
     update_list() {
-        fetch("/api/servers")
+        return fetch("/api/servers")
             .then((response) => {
                 return response.json();
             })
@@ -84,12 +92,21 @@ class ServerBar extends React.Component {
     }
 
     componentDidMount() {
-        console.log("Got here, ServerBar.componentDidMount()");
-        this.update_list();
+        this.update_list()
+            // XXX: needed to set up the initial state when first loaded,
+            //      there's probably a better way to do this...
+            .then(() => {
+                if (this.state.servers.length <= 0) {
+                    return;
+                }
+
+                if (this.props.server === null) {
+                    this.handle_click(this.state.servers[0]);
+                }
+            });
     }
 
     handle_click(server) {
-        console.log("Also got here...");
         this.props.update_server(server)
     }
 
@@ -140,7 +157,7 @@ class ChannelBar extends React.Component {
     }
 
     update_list() {
-        fetch(this.props.server.channels)
+        return fetch(this.props.server.channels)
             .then((response) => {
                 return response.json();
             })
@@ -156,7 +173,18 @@ class ChannelBar extends React.Component {
 
         if (this.props.server != this.state.last_server) {
             this.setState({ last_server: this.props.server });
-            this.update_list();
+            this.update_list()
+                // XXX: needed to set up the initial state when first loaded,
+                //      there's probably a better way to do this...
+                .then(() => {
+                    if (this.state.channels.length <= 0) {
+                        return;
+                    }
+
+                    if (this.props.channel === null) {
+                        this.handle_click(this.state.channels[0]);
+                    }
+                });
         }
     }
 
@@ -198,13 +226,45 @@ class UsersBar extends React.PureComponent {
     }
 }
 
+// requires channel and update_messages() properties
 class InputBox extends React.Component {
+    constructor() {
+        super();
+        this.state = {
+            message: "",
+        };
+    }
+
+    handle_submit() {
+        if (this.props.channel != null) {
+            VerbAPI.sendMessage(this.props.channel.messages, this.state.message)
+                .then((response) => {
+                    this.props.update_messages();
+                });
+        }
+
+        this.setState({message: ""});
+    }
+
+    handle_textbox_update(ev) {
+        this.setState({message: ev.target.value});
+    }
+
     render() {
         return (
-            <form class="bd-search">
-                <input class="form-control" type="search"
-                       placeholder="Enter some text!"></input>
-                <button class="btn d-md-none">Submit</button>
+            <form class="bd-search" action="javascript:void(0);">
+                <div class="input-group">
+                    <input class="form-control" type="search"
+                           value={this.state.message}
+                           onChange={(ev) => { this.handle_textbox_update(ev); }}
+                           placeholder="Enter some text!"></input>
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary"
+                                onClick={() => { this.handle_submit(); }}>
+                            Send
+                        </button>
+                    </div>
+                </div>
             </form>
         )
     }
@@ -227,27 +287,16 @@ class TestComponent extends React.Component {
 class MessageDisplay extends React.Component {
     constructor() {
         super();
+        this.message_footer = null,
         this.state = {
             messages: [],
             last_channel: [],
+            new_messages: false,
         }
-    }
-
-    render_messages() {
-        var ret = [];
-
-        for (var i = 15; i != 0; i--) {
-            ret = ret.concat([
-                <Message author="John Doe" date="Tuesday"
-                         text={"Testing this, testing more stuff, asdf: " + i} />
-            ]);
-        }
-
-        return ret;
     }
 
     update_list() {
-        fetch(this.props.channel.messages)
+        return fetch(this.props.channel.messages)
             .then((response) => {
                 return response.json();
             })
@@ -256,18 +305,33 @@ class MessageDisplay extends React.Component {
             });
     }
 
+    update_messages() {
+        this.setState({new_messages: true,});
+    }
+
+    scroll_to_bottom() {
+        this.message_footer.scrollIntoView({ behavior: "smooth" });
+    }
+
     componentDidUpdate() {
         if (this.props.channel === null) {
             return;
         }
 
-        if (this.props.channel != this.state.last_channel) {
-            this.setState({ last_channel: this.props.channel });
-            this.update_list();
+        if (!this.state.new_messages &&
+            this.props.channel == this.state.last_channel)
+        {
+            return;
         }
+
+        this.setState({last_channel: this.props.channel, new_messages: false,});
+        this.update_list()
+            .then(() => {
+                this.scroll_to_bottom();
+            });
     }
 
-    render () {
+    render() {
         var messages = this.state.messages.map((data, index) => {
             return <Message message={data} />
         });
@@ -278,9 +342,14 @@ class MessageDisplay extends React.Component {
                     <ul class="list-group">
                         { messages }
                     </ul>
+
+                    <div style={{ float: "left", clear: "both" }}
+                         ref={(el) => { this.message_footer = el; }}>
+                    </div>
                 </div>
 
-                <InputBox />
+                <InputBox channel={this.props.channel}
+                          update_messages={() => {this.update_messages();}} />
             </div>
         );
     }
@@ -320,8 +389,10 @@ export default class App extends React.Component {
             <div>
                 <OptionsBar />
                 <div class="row">
-                    <ServerBar update_server={this.update_server} />
+                    <ServerBar server={this.state.server}
+                               update_server={this.update_server} />
                     <ChannelBar server={this.state.server}
+                                channel={this.state.channel}
                                 update_channel={this.update_channel} />
                     <MessageDisplay channel={this.state.channel} />
                     <UsersBar />

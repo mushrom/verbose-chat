@@ -1,14 +1,16 @@
 from rest_framework import status, mixins, generics, permissions
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.reverse import reverse
+from rest_framework.authtoken.models import Token
 from api.models import VerbServer, VerbChannel, VerbMessage
 from api.serializers import VerbServerSerializer
 from api.serializers import VerbChannelSerializer
 from api.serializers import VerbMessageSerializer
 from api.serializers import UserSerializer
 from django.contrib.auth.models import User
+from django.views.decorators.csrf import csrf_protect
 
 @api_view(["GET"])
 def api_root(request, format=None):
@@ -112,3 +114,18 @@ class UserDetail(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+# Used to upgrade from session auth to token auth
+@api_view(["POST"])
+@permission_classes((permissions.IsAuthenticated,))
+@csrf_protect
+def auth_get_token(request, format=None):
+    user = request.user
+    print(user)
+    token = Token.objects.get(user = user)
+
+    return Response({
+        "user": user.id,
+        "username": user.username,
+        "token": str(token),
+    })

@@ -37,6 +37,9 @@ urlpatterns = [
     url(r"^user/(?P<pk>[0-9]+)/$",
         views.UserDetail.as_view(),
         name="user-detail"),
+    url(r"^auth/get-current-token/$",
+        views.auth_get_token,
+        name="auth-get-current-token"),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
