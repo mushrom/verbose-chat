@@ -39,10 +39,14 @@ class Message extends React.PureComponent {
 
 class OptionsBar extends React.PureComponent {
     render() {
+        var topic = (this.props.channel === null)?
+                    "[topic]"
+                    : this.props.channel.topic;
+
         return (
             <div class="row p-2 pl-3 pr-3">
                 <div class="col-xs-1">⚙ Options</div>
-                <div class="col text-center">[spacer]</div>
+                <div class="col text-center">{topic}</div>
                 <div class="col-xs-2">More stuff</div>
             </div>
         );
@@ -387,7 +391,7 @@ export default class App extends React.Component {
     render() {
         return (
             <div>
-                <OptionsBar />
+                <OptionsBar channel={this.state.channel} />
                 <div class="row">
                     <ServerBar server={this.state.server}
                                update_server={this.update_server} />
