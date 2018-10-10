@@ -79,6 +79,7 @@ class ServerBar extends React.Component {
     constructor() {
         super();
         this.handle_click = this.handle_click.bind(this);
+        this.next_list = null;
 
         this.state = {
             servers: [],
@@ -91,7 +92,9 @@ class ServerBar extends React.Component {
                 return response.json();
             })
             .then((json) => {
-                this.setState({servers: json});
+                this.setState({servers: json.results});
+                this.next_list = json.next;
+                console.log("next server list: " + this.next_list);
             });
     }
 
@@ -122,7 +125,7 @@ class ServerBar extends React.Component {
         });
 
         return (
-            <div class="col-12 col-md-2 p-0 m-0">
+            <div class="col-md-2 p-0 m-0 d-none d-md-block">
                 <ul class="list-group">
                     {servs}
                 </ul>
@@ -154,6 +157,7 @@ class ChannelBar extends React.Component {
     constructor() {
         super();
         this.handle_click = this.handle_click.bind(this);
+        this.next_list = null;
         this.state = {
             channels: [],
             last_server: [],
@@ -166,7 +170,8 @@ class ChannelBar extends React.Component {
                 return response.json();
             })
             .then((json) => {
-                this.setState({channels: json.channels});
+                this.setState({channels: json.results});
+                this.next_list = json.next;
             });
     }
 
@@ -205,7 +210,7 @@ class ChannelBar extends React.Component {
         });
 
         return (
-            <div class="col-12 col-md-2 p-0 m-0">
+            <div class="col-md-2 p-0 m-0 d-none d-md-block">
                 <ul class="list-group">
                     { chans }
                 </ul>
@@ -217,7 +222,7 @@ class ChannelBar extends React.Component {
 class UsersBar extends React.PureComponent {
     render() {
         return (
-            <div class="col-12 col-md-2 p-0 m-0">
+            <div class="col-12 col-md-2 p-0 m-0 d-none d-md-block">
                 <ul class="list-group">
                     <li class="list-group-item">Admin</li>
                     <li class="list-group-item">Halfop guy</li>
@@ -291,7 +296,9 @@ class TestComponent extends React.Component {
 class MessageDisplay extends React.Component {
     constructor() {
         super();
-        this.message_footer = null,
+        this.message_footer = null;
+        this.cur_list = null;
+        this.next_list = null;
         this.state = {
             messages: [],
             last_channel: [],
@@ -299,13 +306,52 @@ class MessageDisplay extends React.Component {
         }
     }
 
-    update_list() {
-        return fetch(this.props.channel.messages)
+    get_count() {
+        return fetch(this.props.channel.messages + "?limit=1")
             .then((response) => {
                 return response.json();
             })
             .then((json) => {
-                this.setState({messages: json.messages});
+                return json.count;
+            })
+    }
+
+    update_to_end() {
+        return this.get_count()
+            .then((count) => {
+                console.log("count: " + count);
+                var limit  = 20;
+                var offset = (count > limit)? count - limit : 0;
+
+                this.cur_list = this.props.channel.messages +
+                                    "?limit=" + limit +
+                                    "&offset=" + offset;
+
+                return this.cur_list;
+            })
+            .then((cur) => {
+                console.log("Getting messages at " + cur);
+
+                return fetch(cur)
+                    .then((response) => {
+                        return response.json();
+                    })
+                    .then((json) => {
+                        this.setState({messages: json.results});
+                        this.next_list = json.next;
+                    });
+            });
+    }
+
+    update_list() {
+        /* TODO: save timestamp of last message and update from there */
+        return fetch(this.props.channel.messages + "?limit=1")
+            .then((response) => {
+                return response.json();
+            })
+            .then((json) => {
+                this.setState({messages: json.results});
+                this.next_list = json.next;
             });
     }
 
@@ -329,7 +375,8 @@ class MessageDisplay extends React.Component {
         }
 
         this.setState({last_channel: this.props.channel, new_messages: false,});
-        this.update_list()
+        //this.update_list()
+        this.update_to_end()
             .then(() => {
                 this.scroll_to_bottom();
             });
@@ -341,7 +388,7 @@ class MessageDisplay extends React.Component {
         });
 
         return (
-            <div class="col-12 col-md-6 p-0 m-0">
+            <div class="col p-0 m-0">
                 <div class="container-fluid scroll-overflow verbose-content-box">
                     <ul class="list-group">
                         { messages }
