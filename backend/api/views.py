@@ -30,29 +30,23 @@ class VerbServerList(generics.ListCreateAPIView):
         serializer.save(admin = self.request.user)
 
 class VerbServerChannels(generics.ListCreateAPIView):
-    queryset = VerbServer.objects.all()
+    #queryset = VerbServer.objects.all()
     serializer_class = VerbChannelSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
-    def get(self, request, *args, **kwargs):
-        serv = self.get_object()
-        channels = VerbChannel.objects.filter(server = serv)
-        serv_serializer = VerbServerSerializer(serv, context={"request": request})
-        chan_serializer = VerbChannelSerializer(channels, context={"request": request}, many=True)
+    def get_server(self):
+        filter_kwargs = {self.lookup_field: self.kwargs[self.lookup_field]}
+        return generics.get_object_or_404(VerbServer.objects.all(), **filter_kwargs)
 
-        return Response({
-            "server": serv_serializer.data,
-            "channels": chan_serializer.data,
-        })
+    def get_queryset(self):
+        return VerbChannel.objects.filter(server = self.get_server())
 
     def perform_create(self, serializer):
-        serv = self.get_object()
-        serializer.save(server = serv)
+        serializer.save(server = self.get_server())
 
 class VerbServerDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = VerbServer.objects.all()
     serializer_class = VerbServerSerializer
-    # TODO: token auth
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 class VerbChannelList(generics.ListAPIView):
@@ -81,24 +75,18 @@ class VerbChannelUsers(generics.GenericAPIView):
         })
 
 class VerbChannelMessages(generics.ListCreateAPIView):
-    queryset = VerbChannel.objects.all()
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     serializer_class = VerbMessageSerializer
 
-    def get(self, request, *args, **kwargs):
-        channel = self.get_object()
-        messages = VerbMessage.objects.filter(channel = channel)
-        chan_serializer = VerbChannelSerializer(channel, context={"request": request})
-        msg_serializer = VerbMessageSerializer(messages, context={"request": request}, many=True)
+    def get_channel(self):
+        filter_kwargs = {self.lookup_field: self.kwargs[self.lookup_field]}
+        return generics.get_object_or_404(VerbChannel.objects.all(), **filter_kwargs)
 
-        return Response({
-            "channel": chan_serializer.data,
-            "messages": msg_serializer.data,
-        })
+    def get_queryset(self):
+        return VerbMessage.objects.filter(channel = self.get_channel())
 
     def perform_create(self, serializer):
-        channel = self.get_object()
-        serializer.save(user = self.request.user, channel = channel)
+        serializer.save(user = self.request.user, channel = self.get_channel())
 
 class VerbMessageList(generics.ListCreateAPIView):
     queryset = VerbMessage.objects.all()

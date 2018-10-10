@@ -47,6 +47,12 @@ ALLOWED_HOSTS = ["localhost", "127.0.0.1", "verbose.chat", "api.verbose.chat"]
 
 # Application definition
 
+REST_FRAMEWORK = {
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
+    "PAGE_SIZE": 20,
+    "MAX_PAGE_SIZE": 100,
+}
+
 INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
