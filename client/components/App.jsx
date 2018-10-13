@@ -44,7 +44,7 @@ class OptionsBar extends React.PureComponent {
     render() {
         var topic = (this.props.channel === null)?
                     "[topic]"
-                    : this.props.channel.topic;
+                    : this.props.channel.name + " : " + this.props.channel.topic;
 
         return (
             <div class="row p-2 pl-3 pr-3">
