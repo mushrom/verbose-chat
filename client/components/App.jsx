@@ -301,7 +301,7 @@ class MessageDisplay extends React.Component {
         super();
         this.message_footer = null;
         this.cur_list = null;
-        this.next_list = null;
+        this.prev_list = null;
         this.state = {
             messages: [],
             last_channel: [],
@@ -340,10 +340,31 @@ class MessageDisplay extends React.Component {
                         return response.json();
                     })
                     .then((json) => {
+                        this.prev_list = json.previous;
                         this.setState({messages: json.results});
-                        this.next_list = json.next;
                     });
             });
+    }
+
+    update_previous() {
+        console.log("loading new messages...");
+        if (this.prev_list === null) {
+            // no messages left to load
+            return;
+        }
+
+        return fetch(this.prev_list)
+            .then((response) => {
+                return response.json();
+            })
+            .then((json) => {
+                console.log("Got new messages, previous: " + json.previous);
+                this.prev_list = json.previous;
+
+                this.setState({
+                    messages: json.results.concat(this.state.messages),
+                });
+            })
     }
 
     update_list() {
@@ -353,8 +374,8 @@ class MessageDisplay extends React.Component {
                 return response.json();
             })
             .then((json) => {
+                this.prev_list = json.previous;
                 this.setState({messages: json.results});
-                this.next_list = json.next;
             });
     }
 
@@ -377,6 +398,7 @@ class MessageDisplay extends React.Component {
             return;
         }
 
+        console.log("Doing post-update...");
         this.setState({last_channel: this.props.channel, new_messages: false,});
         //this.update_list()
         this.update_to_end()
@@ -390,9 +412,19 @@ class MessageDisplay extends React.Component {
             return <Message message={data} />
         });
 
+        var loader = (this.prev_list === null)
+            ? (<div></div>)
+            : (<button type="button"
+                       class="btn btn-outline-success btn-block"
+                       onClick={() => { this.update_previous(); }} >
+                   Load more...
+               </button>);
+
         return (
             <div class="col p-0 m-0">
                 <div class="container-fluid scroll-overflow verbose-content-box">
+                    { loader }
+
                     <ul class="list-group">
                         { messages }
                     </ul>
