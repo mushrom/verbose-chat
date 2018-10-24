@@ -447,6 +447,7 @@ export default class App extends React.Component {
 
         this.update_server = this.update_server.bind(this)
         this.update_channel = this.update_channel.bind(this)
+        this.websock = new WebSocket("ws://" + window.location.host + "/ws/chat/");
 
         this.state = {
             counter: 15,
@@ -463,11 +464,19 @@ export default class App extends React.Component {
     update_server(new_server) {
         console.log("Setting new server: " + new_server.name + "... " + new_server);
         this.setState({ server: new_server, channel: null });
+        this.websock.send(JSON.stringify({
+            "type": "server-switch",
+            "data": new_server.id,
+        }));
     }
 
     update_channel(new_channel) {
         console.log("Setting new channel..." + new_channel);
         this.setState({ channel: new_channel });
+        this.websock.send(JSON.stringify({
+            "type": "channel-switch",
+            "data": new_channel.id,
+        }));
     }
 
     render() {
