@@ -12,5 +12,9 @@ class ChatConsumer(WebsocketConsumer):
     def receive(self, text_data):
         print("websocket: " + str(self.scope["user"]) + " sent " + text_data)
 
+        self.send(text_data = json.dumps({
+            "testing": text_data,
+        }))
+
     def chat_message(self, event):
         pass

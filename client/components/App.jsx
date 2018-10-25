@@ -14,13 +14,27 @@ export default class App extends React.Component {
 
         this.update_server = this.update_server.bind(this)
         this.update_channel = this.update_channel.bind(this)
+
         this.websock = new WebSocket("ws://" + window.location.host + "/ws/chat/");
+        this.websock.onmessage = (e) => { this.handle_ws_message(e); };
+        this.websock.onclose = (e) => { this.handle_ws_disconnect(e); };
 
         this.state = {
             counter: 15,
             server: null,
             channel: null,
         };
+    }
+
+    handle_ws_message(e) {
+        var data = JSON.parse(e.data);
+        var message = data["testing"];
+
+        console.log("ws: received " + message);
+    }
+
+    handle_ws_disconnect(e) {
+        console.error("Websocket closed unexpectedly...");
     }
 
     handle_click() {
