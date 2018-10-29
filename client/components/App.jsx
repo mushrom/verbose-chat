@@ -1,6 +1,5 @@
 import React from "react";
 import Fetch from "react-fetch"
-import VerbAPI from "../verbapi.js"
 
 import OptionsBar from "./OptionsBar.jsx"
 import ServerBar from "./ServerBar.jsx"

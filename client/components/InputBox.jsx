@@ -1,4 +1,5 @@
 import React from "react"
+import VerbAPI from "../verbapi.js"
 
 // requires channel and update_messages() properties
 export default class InputBox extends React.Component {
