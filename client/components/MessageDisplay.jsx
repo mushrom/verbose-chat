@@ -12,7 +12,7 @@ export default class MessageDisplay extends React.Component {
         this.state = {
             messages: [],
             last_channel: [],
-            new_messages: false,
+            newmsg_length: -1,
         }
     }
 
@@ -94,28 +94,50 @@ export default class MessageDisplay extends React.Component {
         this.message_footer.scrollIntoView({ behavior: "smooth" });
     }
 
+    needs_update() {
+        return this.state.messages.length == 0
+            || this.props.channel != this.state.last_channel;
+    }
+
     componentDidUpdate() {
         if (this.props.channel === null) {
             return;
         }
 
-        if (!this.state.new_messages &&
-            this.props.channel == this.state.last_channel)
+        if (this.state.newmsg_length == this.props.new_messages.length
+            && this.props.channel == this.state.last_channel)
         {
             return;
         }
 
         console.log("Doing post-update...");
-        this.setState({last_channel: this.props.channel, new_messages: false,});
+        this.setState({
+            last_channel: this.props.channel,
+            newmsg_length: this.props.new_messages.length
+        });
+
+        this.scroll_to_bottom();
+
+        if (this.needs_update()) {
+            this.update_to_end()
+                .then(() => {
+                    this.scroll_to_bottom();
+                });
+        }
+
         //this.update_list()
+        /*
         this.update_to_end()
             .then(() => {
                 this.scroll_to_bottom();
             });
+            */
     }
 
     render() {
-        var messages = this.state.messages.map((data, index) => {
+        var msgs = this.state.messages.concat(this.props.new_messages);
+
+        var messages = msgs.map((data, index) => {
             return <Message message={data} />
         });
 
@@ -142,7 +164,8 @@ export default class MessageDisplay extends React.Component {
                 </div>
 
                 <InputBox channel={this.props.channel}
-                          update_messages={() => {this.update_messages();}} />
+                          /* update_messages={() => {this.update_messages();}} */
+                          send_message={this.props.send_message} />
             </div>
         );
     }

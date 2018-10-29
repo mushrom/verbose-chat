@@ -11,14 +11,16 @@ export default class InputBox extends React.Component {
     }
 
     handle_submit() {
+        // TODO: websockets backend needs to interface with the ORM to add
+        //       objects to the db, so these redundant calls won't be necessary
         if (this.props.channel != null) {
             VerbAPI.sendMessage(this.props.channel.messages, this.state.message)
                 .then((response) => {
-                    this.props.update_messages();
+                    //this.props.update_messages();
+                    this.props.send_message(this.state.message);
+                    this.setState({message: ""});
                 });
         }
-
-        this.setState({message: ""});
     }
 
     handle_textbox_update(ev) {

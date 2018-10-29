@@ -19,31 +19,43 @@ export default class App extends React.Component {
         this.websock.onclose = (e) => { this.handle_ws_disconnect(e); };
 
         this.state = {
-            counter: 15,
             server: null,
             channel: null,
+            // TODO: seriously look into using something like redux to manage
+            //       state, this is turning into spaghetti...
+            new_messages: [],
         };
     }
 
     handle_ws_message(e) {
-        var data = JSON.parse(e.data);
-        var message = data["testing"];
+        var message = JSON.parse(e.data);
+        console.log("ws: received raw " + e.data);
 
-        console.log("ws: received " + message);
+        if (message["type"] == "message") {
+            console.log("Adding new message...");
+            this.setState({ new_messages: this.state.new_messages.concat([message.data]) });
+        }
     }
 
     handle_ws_disconnect(e) {
         console.error("Websocket closed unexpectedly...");
     }
 
-    handle_click() {
-        console.log("got here!");
-        this.setState(({counter: this.state.counter + 1}));
+    handle_send_message(msg) {
+        this.websock.send(JSON.stringify({
+            "type": "message",
+            "data": {
+                "content": msg,
+                // these won'tbe needed once backend code is working properly
+                "username": "TODO ASDF",
+                "date": "TODO ASDF",
+            },
+        }));
     }
 
     update_server(new_server) {
         console.log("Setting new server: " + new_server.name + "... " + new_server);
-        this.setState({ server: new_server, channel: null });
+        this.setState({ server: new_server, channel: null, new_messages: [], });
         this.websock.send(JSON.stringify({
             "type": "server-switch",
             "data": new_server.id,
@@ -52,7 +64,7 @@ export default class App extends React.Component {
 
     update_channel(new_channel) {
         console.log("Setting new channel..." + new_channel);
-        this.setState({ channel: new_channel });
+        this.setState({ channel: new_channel, new_messages: [], });
         this.websock.send(JSON.stringify({
             "type": "channel-switch",
             "data": new_channel.id,
@@ -69,7 +81,9 @@ export default class App extends React.Component {
                     <ChannelBar server={this.state.server}
                                 channel={this.state.channel}
                                 update_channel={this.update_channel} />
-                    <MessageDisplay channel={this.state.channel} />
+                    <MessageDisplay channel={this.state.channel}
+                                    new_messages={this.state.new_messages}
+                                    send_message={(m) => { this.handle_send_message(m); }} />
                     <UsersBar />
                 </div>
             </div>

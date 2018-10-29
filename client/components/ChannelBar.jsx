@@ -62,6 +62,10 @@ export default class ChannelBar extends React.Component {
                 <ul class="list-group">
                     { chans }
                 </ul>
+
+                <button class="btn btn-block btn-outline-secondary">
+                    +
+                </button>
             </div>
         );
     }
