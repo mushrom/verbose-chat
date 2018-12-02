@@ -6,6 +6,7 @@ import ServerBar from "./ServerBar.jsx"
 import ChannelBar from "./ChannelBar.jsx"
 import UsersBar from "./UsersBar.jsx"
 import MessageDisplay from "./MessageDisplay.jsx"
+import TabBox from "./TabBox.jsx"
 
 export default class App extends React.Component {
     constructor(props) {
@@ -72,19 +73,39 @@ export default class App extends React.Component {
     }
 
     render() {
+        var servers = (<ServerBar server={this.state.server}
+                           update_server={this.update_server} />);
+
+        var channels = (<ChannelBar server={this.state.server}
+                                    channel={this.state.channel}
+                                    update_channel={this.update_channel} />);
+
+        var messages = (<MessageDisplay channel={this.state.channel}
+                                        new_messages={this.state.new_messages}
+                                        send_message={(m) => { this.handle_send_message(m); }} />);
+
+        var users = (<UsersBar />);
+
         return (
             <div>
                 <OptionsBar channel={this.state.channel} />
-                <div class="row">
-                    <ServerBar server={this.state.server}
-                               update_server={this.update_server} />
-                    <ChannelBar server={this.state.server}
-                                channel={this.state.channel}
-                                update_channel={this.update_channel} />
-                    <MessageDisplay channel={this.state.channel}
-                                    new_messages={this.state.new_messages}
-                                    send_message={(m) => { this.handle_send_message(m); }} />
-                    <UsersBar />
+
+                <div class="d-none d-md-block">
+                    <div class="row">
+                        {servers}
+                        {channels}
+                        {messages}
+                        {users}
+                    </div>
+                </div>
+
+                <div class="d-md-none m-0">
+                    <TabBox tabs={[
+                        { name: "Servers", content: servers },
+                        { name: "Channels", content: channels },
+                        { name: "Messages", content: messages, selected: true },
+                        { name: "Users", content: users },
+                    ]} />
                 </div>
             </div>
         );
