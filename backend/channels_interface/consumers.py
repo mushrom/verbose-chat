@@ -41,9 +41,9 @@ class ChatConsumer(WebsocketConsumer):
                 {
                     "type": "message",
                     "data": {
-                        "content":  obj["data"]["content"],
-                        "username": str(self.scope["user"]),
-                        "date": str(timezone.now()),
+                        "content":     obj["data"]["content"],
+                        "username":    str(self.scope["user"]),
+                        "date_posted": timezone.now().isoformat(),
                     },
                 }
             )

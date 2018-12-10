@@ -47,9 +47,6 @@ export default class App extends React.Component {
             "type": "message",
             "data": {
                 "content": msg,
-                // these won'tbe needed once backend code is working properly
-                "username": "TODO ASDF",
-                "date": "TODO ASDF",
             },
         }));
     }

@@ -24,7 +24,6 @@ class TabContent extends React.PureComponent {
     render() {
         var classes = "tab-pane fade " +
             (!!this.props.tab.selected? "show active " : "");
-        console.log(classes);
 
         return (
             <div class={classes} id={this.props.tab.name}
