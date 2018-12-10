@@ -58,7 +58,7 @@ export default class ChannelBar extends React.Component {
         });
 
         return (
-            <div class="col-md-2 p-0 m-0">
+            <div class="col p-0 m-0">
                 <ul class="list-group">
                     { chans }
                 </ul>

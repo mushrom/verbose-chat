@@ -85,12 +85,33 @@ export default class App extends React.Component {
 
         return (
             <div>
-                <OptionsBar channel={this.state.channel} />
+                <div class="d-none d-lg-block">
+                    <OptionsBar channel={this.state.channel} />
 
-                <div class="d-none d-md-block">
                     <div class="row">
-                        {servers}
-                        {channels}
+                        <div class="col-2">
+                            {servers}
+                        </div>
+                        <div class="col-2">
+                            {channels}
+                        </div>
+                        {messages}
+                        {users}
+                    </div>
+                </div>
+
+                <div class="d-none d-md-block d-lg-none">
+                    <OptionsBar channel={this.state.channel} />
+
+                    <div class="row">
+                        <div class="col-2">
+                            <div class="row">
+                                <TabBox tabs={[
+                                    { name: "Server", content: servers },
+                                    { name: "Channel", content: channels, selected: true },
+                                ]} />
+                            </div>
+                        </div>
                         {messages}
                         {users}
                     </div>

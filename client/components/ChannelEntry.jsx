@@ -14,10 +14,6 @@ export default class ChannelEntry extends React.PureComponent {
         return (
             <li onClick={this.handle_click} class="list-group-item">
                 {this.props.channel.name}
-
-                <button class="btn btn-sm btn-outline-secondary float-right">
-                    ✕
-                </button>
             </li>
         );
     }
