@@ -1,5 +1,10 @@
 import React from "react"
 
+// Properties:
+//   - server   : a server object, passed from ServerBar
+//   - selected : optional property specifying that this entry is the currently
+//                selected one
+//   - onClick  : callback to handle clicking a server entry
 export default class ServerEntry extends React.PureComponent {
     constructor() {
         super();
@@ -16,7 +21,7 @@ export default class ServerEntry extends React.PureComponent {
 
         return (
             <li onClick={this.handle_click} class="list-group-item">
-                {this.props.server.name}
+                {this.props.server.name + (this.props.selected? "*" : "")}
             </li>
         );
     }

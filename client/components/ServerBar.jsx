@@ -46,7 +46,9 @@ export default class ServerBar extends React.Component {
     render() {
         var servs = this.state.servers.map((data, index) => {
             return (
-                <ServerEntry server={data} onClick={this.handle_click} />
+                <ServerEntry server={data}
+                             selected={this.props.server == data}
+                             onClick={this.handle_click} />
             );
         });
 

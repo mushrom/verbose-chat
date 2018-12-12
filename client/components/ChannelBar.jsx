@@ -53,7 +53,9 @@ export default class ChannelBar extends React.Component {
     render() {
         var chans = this.state.channels.map((data, index) => {
             return (
-                <ChannelEntry channel={data} onClick={this.handle_click} />
+                <ChannelEntry channel={data}
+                              selected={this.props.channel == data}
+                              onClick={this.handle_click} />
             )
         });
 
