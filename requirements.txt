@@ -14,7 +14,7 @@ coreapi==2.3.3
 coreapi-cli==1.0.9
 coreschema==0.0.4
 daphne==2.2.2
-Django==2.1.1
+Django==2.2.10
 djangorestframework==3.8.2
 hiredis==0.2.0
 httpie==0.9.9
